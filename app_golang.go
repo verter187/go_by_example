@@ -1,51 +1,25 @@
 package main
 
-import (
-	"fmt"
-	"time"
-)
+import "fmt"
 
 func main() {
-	i := 2
-	fmt.Print("Write ", i, "as")
-	switch i {
-	case 1:
-		fmt.Println("one")
-	case 2:
-		fmt.Println("two")
-	case 3:
-		fmt.Println("three")
-	}
+	var a [5]int
+	fmt.Println("emp:", a)
 
-	switch time.Now().Weekday() {
-	case time.Saturday, time.Sunday:
-		fmt.Println("It's the weekend")
-	default:
-		fmt.Println("It's a weekend")
-	}
+	a[4] = 100
+	fmt.Println("set", a)
+	fmt.Println("get", a[4])
 
-	t := time.Now()
-	switch {
-	case t.Hour() < 12:
-		fmt.Println("It's before noon")
-	default:
-		fmt.Println("It's after noon")
-	}
+	fmt.Println("len", len(a))
 
-	whatAmI := func(i interface{}) {
+	b := [5]int{1, 2, 3, 4, 5}
+	fmt.Println("dcl:", b)
 
-		switch t := i.(type) {
-		case bool:
-			fmt.Println("I'm a boolean")
-		case int:
-			fmt.Println("I'm a number")
-		default:
-			fmt.Printf("Don't know type %T\n", t)
+	var twoD [2][3]int
+	for i := 0; i < 2; i++ {
+		for j := 0; j < 3; j++ {
+			twoD[i][j] = i + j
 		}
-
+		fmt.Println("2d: ", twoD)
 	}
-
-	whatAmI(true)
-	whatAmI(1)
-	whatAmI("hey")
 }
