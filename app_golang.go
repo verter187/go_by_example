@@ -1,29 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"math"
+)
+
+const s string = "constant"
 
 func main() {
-	var a = "initial"
-	fmt.Println(a)
+	fmt.Println(s)
 
-	var b, c int = 1, 2
-	fmt.Println(b, c)
+	const n = 500000000
 
-	var d = true
+	const d = 3e20 / n
+
 	fmt.Println(d)
 
-	var e int
-	fmt.Println(e)
+	fmt.Println(int64(d))
 
-	f := "apple"
-	fmt.Println(f)
-	xType := fmt.Sprintf("%T", d)
-	fmt.Println(xType)
-	if e == 0 {
-		fmt.Println("!!!!")
-	}
-
-	if f == "apple" {
-		fmt.Println("***")
-	}
+	fmt.Println(math.Sin(n))
 }
