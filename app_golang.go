@@ -19,4 +19,11 @@ func main() {
 	fmt.Println(f)
 	xType := fmt.Sprintf("%T", d)
 	fmt.Println(xType)
+	if e == 0 {
+		fmt.Println("!!!!")
+	}
+
+	if f == "apple" {
+		fmt.Println("***")
+	}
 }
