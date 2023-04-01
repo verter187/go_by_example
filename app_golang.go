@@ -3,24 +3,53 @@ package main
 import "fmt"
 
 func main() {
+	// nums := []int{2, 3, 4}
 
-	m := make(map[string]int)
-	m["k1"] = 7
-	m["k2"] = 14
+	// rand.Seed(time.Now().UnixNano())
 
-	fmt.Println("map:", m)
+	// for i := 0; i < 100000000; i++ {
+	// 	z := rand.Intn(99)
+	// 	nums = append(nums, z)
+	// }
+	// fmt.Println("nums = ", len(nums))
+	// sum := 0
+	// for _, num := range nums {
+	// 	sum += num
+	// }
+	// fmt.Println("sum = ", sum)
 
-	v1 := m["k1"]
-	fmt.Println("v1:", v1)
+	nums := []int{2, 3, 4}
+	sum := 0
+	for _, num := range nums {
+		sum += num
+	}
+	fmt.Println("sum:", sum)
 
-	fmt.Println("len:", len(m))
+	//num - это копия значения, а не ссылка! Если нужно поменять значение, то
+	//nums[i]= 5, а не num = 5
+	for i, num := range nums {
 
-	delete(m, "k2")
-	fmt.Println("map:", m)
+		if num == 3 {
+			fmt.Println("index:", i)
+		}
+		nums[i] = 3
+	}
+	fmt.Println("nums:", nums)
 
-	_, prs := m["k1"]
-	fmt.Println("prs:", prs)
+	kvs := map[string]string{"a": "apple", "b": "banana"}
+	for k, v := range kvs {
+		fmt.Printf("%s -> %s\n", k, v)
+	}
 
-	n := map[string]int{"foo": 1, "aaa": 3, "bar": 2}
-	fmt.Println("map:", n)
+	for k, v := range kvs {
+		fmt.Println("key:", k, "value:", v)
+	}
+
+	for i, c := range "go" {
+		fmt.Println(i, c)
+	}
+
+	for _, c := range "go" {
+		fmt.Printf("%c\n", c)
+	}
 }
