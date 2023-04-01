@@ -2,21 +2,23 @@ package main
 
 import "fmt"
 
-func intSeq() func() int {
-	i := 0
-	return func() int {
-		i++
-		return i
-	}
+func zeroval(ival int) {
+	ival = 0
+}
+
+func zeroptr(iptr *int) {
+	*iptr = 7
 }
 
 func main() {
-	nextInt := intSeq()
+	i := 1
+	fmt.Println("initial:", i)
 
-	fmt.Println(nextInt())
-	fmt.Println(nextInt())
-	fmt.Println(nextInt())
+	zeroval(i)
+	fmt.Println("zeroval:", i)
 
-	newInts := intSeq()
-	fmt.Print(newInts())
+	zeroptr(&i)
+	fmt.Println("zeroptr:", i)
+
+	fmt.Println("pointer:", &i)
 }
