@@ -1,24 +1,14 @@
 package main
 
-import (
-	"fmt"
-	"time"
-)
-
-func cat(messages chan string, str string) {
-	messages <- str
-}
+import "fmt"
 
 func main() {
-	msg := make(chan string, 3)
 
-	go cat(msg, "c")
-	go cat(msg, "a")
-	go cat(msg, "t")
+	messages := make(chan string, 2)
 
-	time.Sleep(time.Second)
-	test := <-msg
-	test += <-msg
-	test += <-msg
-	fmt.Println(test)
+	messages <- "buffered"
+	messages <- "channel"
+
+	fmt.Println(<-messages)
+	fmt.Println(<-messages)
 }
