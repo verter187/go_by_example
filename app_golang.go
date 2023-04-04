@@ -5,38 +5,20 @@ import (
 	"time"
 )
 
-func f(from string) {
-	sum := 0
-	start := time.Now()
-	for i := 0; i < 10000000000; i++ {
-		sum += 1
-	}
-	duration := time.Since(start)
-	fmt.Println(from, ":", duration)
+func cat(messages chan string, str string) {
+	messages <- str
 }
 
 func main() {
-	go f("поток1")
-	go f("поток2")
-	go f("поток3")
-	go f("поток4")
-	go f("поток5")
-	go f("поток6")
-	go f("поток7")
-	go f("поток8")
-	go f("поток9")
-	go f("поток10")
-	go f("поток11")
-	go f("поток12")
-	go f("поток13")
-	go f("поток14")
-	go f("поток15")
-	go f("поток16")
+	msg := make(chan string, 3)
 
-	go func(msg string) {
-		fmt.Println(msg)
-	}("going")
+	go cat(msg, "c")
+	go cat(msg, "a")
+	go cat(msg, "t")
 
-	time.Sleep(10 * time.Second)
-	fmt.Println("done")
+	time.Sleep(time.Second)
+	test := <-msg
+	test += <-msg
+	test += <-msg
+	fmt.Println(test)
 }
