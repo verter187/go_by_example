@@ -1,52 +1,42 @@
 package main
 
 import (
-	"errors"
 	"fmt"
+	"time"
 )
 
-func f1(arg int) (int, error) {
-	if arg == 42 {
-		return -1, errors.New("can't work with 42")
+func f(from string) {
+	sum := 0
+	start := time.Now()
+	for i := 0; i < 10000000000; i++ {
+		sum += 1
 	}
-	return arg + 3, nil
-}
-
-type argError struct {
-	arg  int
-	prob string
-}
-
-func (e *argError) Error() string {
-	return fmt.Sprintf("%d - %s", e.arg, e.prob)
-}
-
-func f2(arg int) (int, error) {
-	if arg == 42 {
-		return -1, &argError{arg, "can't work with it'"}
-	}
-	return arg + 3, nil
+	duration := time.Since(start)
+	fmt.Println(from, ":", duration)
 }
 
 func main() {
-	for _, i := range []int{7, 42} {
-		if r, e := f1(i); e != nil {
-			fmt.Println("f1 failed:", e)
-		} else {
-			fmt.Println("f1 worked:", r)
-		}
-	}
-	for _, i := range []int{7, 42} {
-		if r, e := f2(i); e != nil {
-			fmt.Println("f2 failed:", e)
-		} else {
-			fmt.Println("f2 worked:", r)
-		}
-	}
+	go f("поток1")
+	go f("поток2")
+	go f("поток3")
+	go f("поток4")
+	go f("поток5")
+	go f("поток6")
+	go f("поток7")
+	go f("поток8")
+	go f("поток9")
+	go f("поток10")
+	go f("поток11")
+	go f("поток12")
+	go f("поток13")
+	go f("поток14")
+	go f("поток15")
+	go f("поток16")
 
-	_, e := f2(42)
-	if ae, ok := e.(*argError); ok {
-		fmt.Println(ae.arg)
-		fmt.Println(ae.prob)
-	}
+	go func(msg string) {
+		fmt.Println(msg)
+	}("going")
+
+	time.Sleep(10 * time.Second)
+	fmt.Println("done")
 }
