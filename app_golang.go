@@ -6,22 +6,22 @@ import (
 )
 
 func main() {
-	timer1 := time.NewTimer(2 * time.Second)
+	ticker := time.NewTicker(500 * time.Millisecond)
+	done := make(chan bool)
 
-	<-timer1.C
-	fmt.Println("Timer 1 expired")
-
-	timer2 := time.NewTimer(1 * time.Second)
 	go func() {
-		<-timer2.C
-		fmt.Println("Timer 2 expired")
+		for {
+			select {
+			case <-done:
+				return
+			case t := <-ticker.C:
+				fmt.Println("Tick at", t)
+			}
+		}
 	}()
-	stop2 := timer2.Stop()
-	if stop2 {
-		fmt.Println("Time 2 stopped")
-	}
-	timer3 := time.NewTimer(3 * time.Second)
-	<-timer3.C
-	fmt.Println("Timer 3 expired")
 
+	time.Sleep(1600 * time.Millisecond)
+	ticker.Stop()
+	done <- true
+	fmt.Println("Ticker stopped")
 }
