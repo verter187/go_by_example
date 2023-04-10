@@ -2,75 +2,26 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	s "strings"
 )
 
-func Index(vs []string, t string) int {
-	for i, v := range vs {
-		if v == t {
-			return i
-		}
-	}
-	return -1
-}
-
-func Include(vs []string, t string) bool {
-	return Index(vs, t) >= 0
-}
-
-func Any(vs []string, f func(string) bool) bool {
-	for _, v := range vs {
-		if f(v) {
-			return true
-		}
-	}
-	return false
-}
-
-func All(vs []string, f func(string) bool) bool {
-	for _, v := range vs {
-		if !f(v) {
-			return false
-		}
-	}
-	return true
-}
-
-func Filter(vs []string, f func(string) bool) []string {
-	vsf := make([]string, 0)
-	for _, v := range vs {
-		if f(v) {
-			vsf = append(vsf, v)
-		}
-	}
-	return vsf
-}
-
-func Map(vs []string, f func(string) string) []string {
-	vsm := make([]string, len(vs))
-	for i, v := range vs {
-		vsm[i] = f(v)
-	}
-	return vsm
-}
+var p = fmt.Println
 
 func main() {
-	var strs = []string{"peach", "apple", "pear", "plum"}
-	fmt.Println(Index(strs, "apple"))
 
-	fmt.Println(Include(strs, "apple"))
-
-	fmt.Println(Any(strs, func(v string) bool {
-		return strings.HasPrefix(v, "app")
-	}))
-
-	fmt.Println(All(strs, func(v string) bool {
-		return strings.HasPrefix(v, "p")
-	}))
-
-	fmt.Println(Filter(strs, func(v string) bool {
-		return strings.Contains(v, "e")
-	}))
-
-	fmt.Println(Map(strs, strings.ToUpper))
+	p("Contains:	", s.Contains("test", "es"))
+	p("Count:		", s.Count("test", "t"))
+	p("HasPrefix:	", s.HasPrefix("test", "te"))
+	p("HasSuffix:	", s.HasSuffix("test", "st"))
+	p("Index:		", s.Index("test", "e"))
+	p("Join:		", s.Join([]string{"a", "b"}, "-"))
+	p("Repeat:		", s.Repeat("a", 5))
+	p("Replace:		", s.Replace("foooo", "o", "0", -1))
+	p("Replace:		", s.Replace("foooo", "o", "0", 3))
+	p("Split:		", s.Split("test str", " "))
+	p("ToLower:		", s.ToLower("TEST"))
+	p("ToUpper:		", s.ToUpper("test"))
+	p()
+	p("Len:		", len("test"))
+	p("Char:		", "test"[1])
 }
