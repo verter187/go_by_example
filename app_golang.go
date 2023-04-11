@@ -1,83 +1,47 @@
 package main
 
 import (
-	"encoding/json"
+	"encoding/xml"
 	"fmt"
-	"os"
-	"reflect"
 )
 
-type response1 struct {
-	Page   int
-	Fruits []string
+type Plant struct {
+	XMLName xml.Name `xml:"plant"`
+	Id      int      `xml:"id,attr"`
+	Name    string   `xml:"name"`
+	Origin  []string `xml:"origin"`
 }
 
-// Только экспортируемые поля могут быть кодированы и декодированы в JSON. Поля должны начинаться с заглавной буквы.
-type response2 struct {
-	Page   int      `json:"page"`
-	Fruits []string `json:"fruits"`
+func (p Plant) String() string {
+	return fmt.Sprintf("Plant id=%v, name=%v, origin=%v", p.Id, p.Name, p.Origin)
 }
 
 func main() {
+	coffee := &Plant{Id: 27, Name: "Coffee"}
+	coffee.Origin = []string{"Ethiopia", "Brazil"}
 
-	bolB, _ := json.Marshal(true)
-	fmt.Println(string(bolB))
+	out, _ := xml.MarshalIndent(coffee, " ", "  ")
+	// fmt.Println(string(out))
 
-	intB, _ := json.Marshal(1)
-	fmt.Println(string(intB))
+	// fmt.Println(xml.Header + string(out))
 
-	fltB, _ := json.Marshal(2.34)
-	fmt.Println(string(fltB))
-
-	strB, _ := json.Marshal("gopher")
-	fmt.Println(string(strB))
-
-	slcD := []string{"apple", "peach", "pear"}
-	slcB, _ := json.Marshal((slcD))
-	fmt.Println(string(slcB))
-
-	mapD := map[string]int{"apple": 5, "lettuce": 7}
-	mapB, _ := json.Marshal(mapD)
-	fmt.Println(string(mapB))
-
-	res1D := &response1{
-		Page:   1,
-		Fruits: []string{"apple", "peach", "pear"}}
-	res1B, _ := json.Marshal(res1D)
-	fmt.Println(string(res1B))
-
-	res2D := &response2{
-		Page:   1,
-		Fruits: []string{"apple", "peach", "pear"}}
-	res2B, _ := json.Marshal(res2D)
-	fmt.Println(string(res2B))
-	fmt.Println(reflect.TypeOf(res2B))
-
-	byt := []byte(`{"num":6.13, "strs":["a", "b"]}`)
-
-	var dat map[string]interface{}
-
-	if err := json.Unmarshal(byt, &dat); err != nil {
+	var p Plant
+	if err := xml.Unmarshal(out, &p); err != nil {
 		panic(err)
 	}
-	fmt.Println(dat)
+	// fmt.Println(p.Origin[1])
 
-	num := dat["num"].(float64)
-	fmt.Println(reflect.TypeOf(num))
+	tomato := &Plant{Id: 81, Name: "Tomato"}
+	tomato.Origin = []string{"Mexico", "California"}
 
-	strs := dat["strs"].([]interface{})
-	str1 := strs[1].(string)
-	fmt.Println(str1)
+	type Nesting struct {
+		XMLName xml.Name `xml:"nesting"`
+		Plants  []*Plant `xml:"parent>child>plant`
+	}
 
-	str := `{"page":1, "fruits": ["apple", "peach"]}`
-	res := response2{}
-	json.Unmarshal([]byte(str), &res)
-	fmt.Println(res)
-	fmt.Println(res.Fruits[1])
-	fmt.Println(res.Page)
+	nesting := &Nesting{}
+	nesting.Plants = []*Plant{coffee, tomato}
 
-	enc := json.NewEncoder(os.Stdout)
-	d := map[string]int{"apple": 5, "lettuce": 7}
-	enc.Encode(d)
-
+	out, _ = xml.MarshalIndent(nesting, " ", "  ")
+	fmt.Println(string(out))
 }
