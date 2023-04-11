@@ -1,61 +1,83 @@
 package main
 
 import (
-	"bytes"
+	"encoding/json"
 	"fmt"
-	"regexp"
+	"os"
+	"reflect"
 )
+
+type response1 struct {
+	Page   int
+	Fruits []string
+}
+
+// Только экспортируемые поля могут быть кодированы и декодированы в JSON. Поля должны начинаться с заглавной буквы.
+type response2 struct {
+	Page   int      `json:"page"`
+	Fruits []string `json:"fruits"`
+}
 
 func main() {
 
-	// Проверяем, соответствует ли шаблон строке
-	match, _ := regexp.MatchString("p([a-z]+)ch", "panch")
-	fmt.Println(match)
+	bolB, _ := json.Marshal(true)
+	fmt.Println(string(bolB))
 
-	// Можно скомпилировать оптимизированную структуру Regexp
-	r, _ := regexp.Compile("p([a-z]+)ch")
+	intB, _ := json.Marshal(1)
+	fmt.Println(string(intB))
 
-	// Множество методов доступны для этой структуры. Вот
-	// тест на совпадение, который мы видели ранее.
-	fmt.Println(r.MatchString("peach"))
+	fltB, _ := json.Marshal(2.34)
+	fmt.Println(string(fltB))
 
-	// Этот метод находит соответствие для регулярного выражения.
-	fmt.Println(r.FindString("punch peach"))
+	strB, _ := json.Marshal("gopher")
+	fmt.Println(string(strB))
 
-	// Этот метод также находит первое совпадение, но возвращает
-	// начальный и конечный индексы совпадения вместо текста.
-	fmt.Println(r.FindStringIndex("punch peach"))
+	slcD := []string{"apple", "peach", "pear"}
+	slcB, _ := json.Marshal((slcD))
+	fmt.Println(string(slcB))
 
-	// Варианты Submatch включают в себя информацию как о совпадениях с полным шаблоном, так и о совпадениях с частями шаблона.
-	// Например, эта конструкция вернет информацию как для p([a-z]+)ch, так и для ([a-z]+).
-	fmt.Println(r.FindStringSubmatch("peach punch"))
+	mapD := map[string]int{"apple": 5, "lettuce": 7}
+	mapB, _ := json.Marshal(mapD)
+	fmt.Println(string(mapB))
 
-	// Точно так же это возвратит информацию об индексах совпадений и подсовпадений.
-	fmt.Println(r.FindStringSubmatchIndex("peach punch"))
+	res1D := &response1{
+		Page:   1,
+		Fruits: []string{"apple", "peach", "pear"}}
+	res1B, _ := json.Marshal(res1D)
+	fmt.Println(string(res1B))
 
-	// Метод All применяется ко всем совпадениям на входе, а не только к первому.
-	// Например, чтобы найти все совпадения для регулярного выражения.
-	fmt.Println(r.FindAllString("peach punch pinch", -1))
+	res2D := &response2{
+		Page:   1,
+		Fruits: []string{"apple", "peach", "pear"}}
+	res2B, _ := json.Marshal(res2D)
+	fmt.Println(string(res2B))
+	fmt.Println(reflect.TypeOf(res2B))
 
-	// Этот метод All доступен и для других функций, которые мы видели выше.
-	fmt.Println(r.FindAllStringSubmatchIndex("peach punch pinch", -1))
+	byt := []byte(`{"num":6.13, "strs":["a", "b"]}`)
 
-	// Указание неотрицательного целого числа в качестве второго аргумента для этих функций ограничит количество совпадений.
-	fmt.Println(r.FindAllString("peach punch pinch", 2))
+	var dat map[string]interface{}
 
-	// В примерах выше были строковые аргументы и использовались такие имена, как MatchString.
-	// Мы также можем предоставить []byte аргументы и удалить String из имени функции.
-	fmt.Println(r.Match([]byte("peach")))
+	if err := json.Unmarshal(byt, &dat); err != nil {
+		panic(err)
+	}
+	fmt.Println(dat)
 
-	// При создании констант с регулярными выражениями вы можете использовать MustCompile, как аналог Compile.
-	// Обычный Compile не будет работать для констант, потому что он возвращает 2 значения.
-	r = regexp.MustCompile("p([a-z]+)ch")
-	fmt.Println(r)
+	num := dat["num"].(float64)
+	fmt.Println(reflect.TypeOf(num))
 
-	// Пакет regexp также можно использовать для замены подмножеств строк другими значениями.
-	fmt.Println(r.ReplaceAllString("a peach", "<fruit>"))
+	strs := dat["strs"].([]interface{})
+	str1 := strs[1].(string)
+	fmt.Println(str1)
 
-	in := []byte("a peach")
-	out := r.ReplaceAllFunc(in, bytes.ToUpper)
-	fmt.Println(string(out))
+	str := `{"page":1, "fruits": ["apple", "peach"]}`
+	res := response2{}
+	json.Unmarshal([]byte(str), &res)
+	fmt.Println(res)
+	fmt.Println(res.Fruits[1])
+	fmt.Println(res.Page)
+
+	enc := json.NewEncoder(os.Stdout)
+	d := map[string]int{"apple": 5, "lettuce": 7}
+	enc.Encode(d)
+
 }
