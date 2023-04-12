@@ -2,35 +2,45 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+	"testing"
 )
 
-func check(e error) {
-	if e != nil {
-		panic(e)
+func IntMin(a, b int) int {
+	if a < b {
+		return a
+	} else {
+		return b
 	}
 }
 
-func main() {
+func TestIntMinBasic(t *testing.T) {
+	ans := IntMin(2, -2)
+	if ans != -2 {
 
-	f, err := os.CreateTemp("", "sample")
-	check(err)
+		t.Errorf("IntMin(2, -2) = %d; want -2", ans)
+	}
+}
 
-	fmt.Println("Temp file name:", f.Name())
+func TestIntMinTableDriven(t *testing.T) {
+	var tests = []struct {
+		a, b int
+		want int
+	}{
+		{0, 1, 0},
+		{1, 0, 0},
+		{2, -2, -2},
+		{0, -1, -1},
+		{-1, 0, -1},
+	}
 
-	defer os.Remove(f.Name())
+	for _, tt := range tests {
 
-	_, err = f.Write([]byte{1, 2, 3, 4})
-	check(err)
-
-	dname, err := os.MkdirTemp("", "sampledir")
-	check(err)
-	fmt.Println("Temp dir name:", dname)
-
-	defer os.RemoveAll(dname)
-
-	fname := filepath.Join(dname, "file1")
-	err = os.WriteFile(fname, []byte{1, 2}, 0666)
-	check(err)
+		testname := fmt.Sprintf("%d,%d", tt.a, tt.b)
+		t.Run(testname, func(t *testing.T) {
+			ans := IntMin(tt.a, tt.b)
+			if ans != tt.want {
+				t.Errorf("got %d, want %d", ans, tt.want)
+			}
+		})
+	}
 }
