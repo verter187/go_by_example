@@ -2,45 +2,17 @@ package main
 
 import (
 	"fmt"
-	"testing"
+	"os"
 )
 
-func IntMin(a, b int) int {
-	if a < b {
-		return a
-	} else {
-		return b
-	}
-}
+func main() {
 
-func TestIntMinBasic(t *testing.T) {
-	ans := IntMin(2, -2)
-	if ans != -2 {
+	argsWithProg := os.Args
+	argsWithoutProg := os.Args[1:]
 
-		t.Errorf("IntMin(2, -2) = %d; want -2", ans)
-	}
-}
+	arg := os.Args[4]
 
-func TestIntMinTableDriven(t *testing.T) {
-	var tests = []struct {
-		a, b int
-		want int
-	}{
-		{0, 1, 0},
-		{1, 0, 0},
-		{2, -2, -2},
-		{0, -1, -1},
-		{-1, 0, -1},
-	}
-
-	for _, tt := range tests {
-
-		testname := fmt.Sprintf("%d,%d", tt.a, tt.b)
-		t.Run(testname, func(t *testing.T) {
-			ans := IntMin(tt.a, tt.b)
-			if ans != tt.want {
-				t.Errorf("got %d, want %d", ans, tt.want)
-			}
-		})
-	}
+	fmt.Println(argsWithProg)
+	fmt.Println(argsWithoutProg)
+	fmt.Println(arg)
 }
