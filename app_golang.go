@@ -1,24 +1,27 @@
 package main
 
 import (
+	"fmt"
 	"os"
-	"os/exec"
+	"os/signal"
 	"syscall"
 )
 
 func main() {
 
-	binary, lookErr := exec.LookPath("ls")
-	if lookErr != nil {
-		panic(lookErr)
-	}
+	sigs := make(chan os.Signal, 1)
+	done := make(chan bool, 1)
 
-	args := []string{"ls", "-a", "-l", "-h"}
+	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 
-	env := os.Environ()
+	go func() {
+		sig := <-sigs
+		fmt.Println()
+		fmt.Println(sig)
+		done <- true
+	}()
 
-	execErr := syscall.Exec(binary, args, env)
-	if execErr != nil {
-		panic(execErr)
-	}
+	fmt.Println("awaiting signal")
+	<-done
+	fmt.Println("exiting")
 }
