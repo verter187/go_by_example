@@ -1,25 +1,41 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
+	"path/filepath"
 	"strings"
 )
 
 func main() {
 
-	scanner := bufio.NewScanner(os.Stdin)
+	p := filepath.Join("dir1", "dir2", "filename")
+	fmt.Println("p:", p)
 
-	for scanner.Scan() {
+	fmt.Println(filepath.Join("dir1//", "filename"))
+	fmt.Println(filepath.Join("dir1/../dir1", "filename"))
 
-		ucl := strings.ToUpper(scanner.Text())
+	fmt.Println("Dir(p):", filepath.Dir(p))
+	fmt.Println("Base(p):", filepath.Base(p))
 
-		fmt.Println(ucl)
+	fmt.Println(filepath.IsAbs("dir/file"))
+	fmt.Println(filepath.IsAbs("/dir/file"))
+
+	filename := "config.json"
+
+	ext := filepath.Ext(filename)
+	fmt.Println(ext)
+
+	fmt.Println(strings.TrimSuffix(filename, ext))
+
+	rel, err := filepath.Rel("a/b", "a/b/t/file")
+	if err != nil {
+		panic(err)
 	}
+	fmt.Println(rel)
 
-	if err := scanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "error:", err)
-		os.Exit(1)
+	rel, err = filepath.Rel("a/b", "a/c/t/file")
+	if err != nil {
+		panic(err)
 	}
+	fmt.Println(rel)
 }
