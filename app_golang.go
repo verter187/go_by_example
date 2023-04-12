@@ -2,40 +2,68 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
-	"strings"
 )
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
 
 func main() {
 
-	p := filepath.Join("dir1", "dir2", "filename")
-	fmt.Println("p:", p)
+	err := os.Mkdir("subdir", 0755)
+	check(err)
 
-	fmt.Println(filepath.Join("dir1//", "filename"))
-	fmt.Println(filepath.Join("dir1/../dir1", "filename"))
+	defer os.RemoveAll("subdir")
 
-	fmt.Println("Dir(p):", filepath.Dir(p))
-	fmt.Println("Base(p):", filepath.Base(p))
-
-	fmt.Println(filepath.IsAbs("dir/file"))
-	fmt.Println(filepath.IsAbs("/dir/file"))
-
-	filename := "config.json"
-
-	ext := filepath.Ext(filename)
-	fmt.Println(ext)
-
-	fmt.Println(strings.TrimSuffix(filename, ext))
-
-	rel, err := filepath.Rel("a/b", "a/b/t/file")
-	if err != nil {
-		panic(err)
+	createEmptyFile := func(name string) {
+		d := []byte("")
+		check(os.WriteFile(name, d, 0644))
 	}
-	fmt.Println(rel)
 
-	rel, err = filepath.Rel("a/b", "a/c/t/file")
-	if err != nil {
-		panic(err)
+	createEmptyFile("subdir/file1")
+
+	err = os.MkdirAll("subdir/parent/child", 0755)
+	check(err)
+
+	createEmptyFile("subdir/parent/file2")
+	createEmptyFile("subdir/parent/file3")
+	createEmptyFile("subdir/parent/child/file4")
+
+	c, err := os.ReadDir("subdir/parent")
+	check(err)
+
+	fmt.Println("Listing subdir/parent")
+	for _, entry := range c {
+		fmt.Println(" ", entry.Name(), entry.IsDir())
 	}
-	fmt.Println(rel)
+
+	err = os.Chdir("subdir/parent/child")
+	check(err)
+
+	c, err = os.ReadDir(".")
+	check(err)
+
+	fmt.Println("Listing subdir/parent/child")
+	for _, entry := range c {
+		fmt.Println(" ", entry.Name(), entry.IsDir())
+	}
+
+	err = os.Chdir("../../..")
+	check(err)
+
+	fmt.Println("Visiting subdir")
+	err = filepath.Walk("subdir", visit)
+	check(err)
+}
+
+func visit(p string, info os.FileInfo, err error) error {
+	if err != nil {
+		return err
+	}
+	fmt.Println(" ", p, info.IsDir())
+	return nil
 }
