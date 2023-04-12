@@ -1,37 +1,29 @@
 package main
 
 import (
+	"crypto/md5"
+	"crypto/sha1"
 	"fmt"
-	"net"
-	"net/url"
 )
 
 func main() {
+	s := "sha1 this string"
 
-	s := "postgres://user:pass@host.com:5432/path?k=v#f"
+	h := sha1.New()
 
-	u, err := url.Parse(s)
-	if err != nil {
-		panic(err)
-	}
+	h.Write([]byte(s))
 
-	fmt.Println(u.Scheme)
+	bs := sha1.Sum(nil)
 
-	fmt.Println(u.User)
-	fmt.Println(u.User.Username())
-	p, _ := u.User.Password()
-	fmt.Println(p)
+	fmt.Println(s)
+	fmt.Printf("%x\n", bs)
 
-	fmt.Println(u.Host)
-	host, port, _ := net.SplitHostPort(u.Host)
-	fmt.Println(host)
-	fmt.Println(port)
+	hmd := md5.New()
 
-	fmt.Println(u.Path)
-	fmt.Println(u.Fragment)
+	hmd.Write([]byte(s))
 
-	fmt.Println(u.RawQuery)
-	m, _ := url.ParseQuery(u.RawQuery)
-	fmt.Println(m)
-	fmt.Println(m["k"][0])
+	bsmd := md5.Sum(nil)
+
+	fmt.Println(s)
+	fmt.Printf("%x\n", bsmd)
 }
