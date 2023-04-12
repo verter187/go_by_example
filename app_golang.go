@@ -1,29 +1,23 @@
 package main
 
 import (
-	"crypto/md5"
-	"crypto/sha1"
+	b64 "encoding/base64"
 	"fmt"
 )
 
 func main() {
-	s := "sha1 this string"
 
-	h := sha1.New()
+	data := "abc123!?$*&()'-=@~"
 
-	h.Write([]byte(s))
+	sEnc := b64.StdEncoding.EncodeToString([]byte(data))
+	fmt.Println(sEnc)
 
-	bs := sha1.Sum(nil)
+	sDec, _ := b64.StdEncoding.DecodeString(sEnc)
+	fmt.Println(string(sDec))
+	fmt.Println()
 
-	fmt.Println(s)
-	fmt.Printf("%x\n", bs)
-
-	hmd := md5.New()
-
-	hmd.Write([]byte(s))
-
-	bsmd := md5.Sum(nil)
-
-	fmt.Println(s)
-	fmt.Printf("%x\n", bsmd)
+	uEnc := b64.URLEncoding.EncodeToString([]byte(data))
+	fmt.Println(uEnc)
+	uDec, _ := b64.URLEncoding.DecodeString(uEnc)
+	fmt.Println(string(uDec))
 }
