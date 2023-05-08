@@ -2,26 +2,23 @@ package main
 
 import (
 	"fmt"
+
 	"os"
-	"os/signal"
-	"syscall"
+	"path/filepath"
 )
 
 func main() {
+	path := "/home/wurtow977/Development/others/testfiles1/"
 
-	sigs := make(chan os.Signal, 1)
-	done := make(chan bool, 1)
-
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-
-	go func() {
-		sig := <-sigs
-		fmt.Println()
-		fmt.Println(sig)
-		done <- true
-	}()
-
-	fmt.Println("awaiting signal")
-	<-done
-	fmt.Println("exiting")
+	err := os.MkdirAll(filepath.Dir(path), 0766)
+	if err != nil {
+		fmt.Println("Error ", err.Error())
+	}
+	for i := 0; i < 10; i++ {
+		f, err := os.Create(fmt.Sprintf("%sfile%d.txt", path, i))
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(f.Name())
+	}
 }
