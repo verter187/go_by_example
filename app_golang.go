@@ -14,11 +14,12 @@ func main() {
 	if err != nil {
 		fmt.Println("Error ", err.Error())
 	}
-	for i := 0; i < 10; i++ {
-		f, err := os.Create(fmt.Sprintf("%sfile%d.txt", path, i))
+	for i := 0; i < 7; i++ {
+
+		err := os.Remove(fmt.Sprintf("%sfile%d.txt", path, i))
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(f.Name())
+
 	}
 }
