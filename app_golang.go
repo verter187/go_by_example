@@ -2,33 +2,46 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
+	"log"
 	"os"
 	"path/filepath"
-	"time"
+	"strings"
 )
 
 func main() {
-	s1 := rand.NewSource(time.Now().UnixNano())
-	r1 := rand.New(s1)
 
-	fmt.Print(r1.Intn(10))
+	oldP := "/home/wurtow977/Development/others/testfiles1/"
+	newP := "/home/wurtow977/Development/others/newfiles1/"
+	err := filepath.Walk(oldP,
+		func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
 
-	sls := []string{"pdf", "doc", "doc", "png", "png", "txt", "doc", "txt", "pdf", "txt"}
+			if !info.IsDir() {
+				fname := filepath.Base(path)
+				cExt := filepath.Ext(fname)
+				cExt = strings.Replace(cExt, ".", "", -1)
 
-	path := "/home/wurtow977/Development/others/testfiles1/"
+				ctlgExt := filepath.Join(newP, cExt)
 
-	err := os.MkdirAll(filepath.Dir(path), 0766)
+				err = os.MkdirAll(ctlgExt, 0766)
+				fmt.Println(ctlgExt)
+				if err == nil {
+					err = os.Rename(filepath.Join(path), filepath.Join(ctlgExt, fname))
+					if err != nil {
+						fmt.Println(err)
+						return err
+					}
+				}
+
+				fmt.Println(fname)
+				return nil
+			}
+			return nil
+		})
 	if err != nil {
-		fmt.Println("Error ", err.Error())
+		log.Println(err)
 	}
 
-	for i := 0; i < 10; i++ {
-
-		f, err := os.Create(fmt.Sprintf("%sfile%d.%s", path, i, sls[r1.Intn(10)]))
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(f.Name())
-	}
 }
